@@ -6,35 +6,25 @@
   <link rel="stylesheet" href="style.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-    
-const firebaseConfig = {
-  apiKey: "AIzaSyCPzdel1SclRUJc4A3XJbs1DGkoeVGlxtY",
-  authDomain: "agniveghaplatform.firebaseapp.com",
-  projectId: "agniveghaplatform",
-  storageBucket: "agniveghaplatform.firebasestorage.app",
-  messagingSenderId: "1031905077219",
-  appId: "1:1031905077219:web:6096fa48a8d2d35d8be2d6"
-};
+const auth = getAuth();
 
+document.getElementById("loginForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-    window.loginUser = function(event) {
-      event.preventDefault();
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          window.location.href = "dashboard.html";
-        })
-        .catch((error) => {
-          alert("Login failed: " + error.message);
-        });
-    };
+  setPersistence(auth, browserLocalPersistence).then(() => {
+    return signInWithEmailAndPassword(auth, email, password);
+  }).then((userCredential) => {
+    // Redirect to dashboard on success
+    window.location.href = "dashboard.html";
+  }).catch((error) => {
+    alert("Login failed: " + error.message);
+  });
+});
   </script>
 </head>
 <body>
