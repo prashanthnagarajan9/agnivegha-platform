@@ -2,23 +2,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Agnivegha</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Dashboard - Agnivegha</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeHha36Q4D8sSQTlCuStw_EwCmZ2uMVIU&libraries=places"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeHha36Q4D8sSQTlCuStw_EwCmZ2uMVIU",
+      authDomain: "agniveghaplatform.firebaseapp.com",
+      projectId: "agniveghaplatform",
+      storageBucket: "agniveghaplatform.firebasestorage.app",
+      messagingSenderId: "1031905077219",
+      appId: "1:1031905077219:web:6096fa48a8d2d35d8be2d6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+
+    // Auth guard
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+      }
+    });
+
+    window.logoutUser = function() {
+      signOut(auth).then(() => {
+        window.location.href = "index.html";
+      });
+    };
+
+    window.initAutocomplete = function () {
+      const originInput = document.getElementById("origin");
+      const destinationInput = document.getElementById("destination");
+
+      new google.maps.places.Autocomplete(originInput, {
+        types: ['(cities)'],
+        fields: ['place_id', 'geometry', 'name', 'formatted_address']
+      });
+
+      new google.maps.places.Autocomplete(destinationInput, {
+        types: ['(cities)'],
+        fields: ['place_id', 'geometry', 'name', 'formatted_address']
+      });
+    };
+  </script>
+  <script>
+    window.onload = function () {
+      if (typeof initAutocomplete === "function") {
+        initAutocomplete();
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 40px;
+    }
+    input {
+      width: 300px;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .container {
+      max-width: 600px;
+    }
+    .confidential {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <img src="logo.png" alt="Agnivegha Logo" class="logo">
-        <h2>Freight Estimator</h2>
-        <form>
-            <input type="text" placeholder="Origin"><br>
-            <input type="text" placeholder="Destination"><br>
-            <select><option>Sea</option><option>Air</option></select><br>
-            <input type="text" placeholder="Container Type"><br>
-            <button type="submit">Estimate</button>
-        </form>
-        <button>Rate Intelligence (Coming Soon)</button>
-        <p class="confidential">CONFIDENTIAL – FOR INTERNAL USE ONLY</p>
-    </div>
+  <div class="container">
+    <h2>Welcome to Your Dashboard</h2>
+    <label>Origin:</label><br/>
+    <input id="origin" type="text" placeholder="Enter origin city or country"><br/>
+    <label>Destination:</label><br/>
+    <input id="destination" type="text" placeholder="Enter destination city or country"><br/>
+    <button onclick="logoutUser()">Logout</button>
+    <p class="confidential">CONFIDENTIAL – FOR AUTHORIZED USERS ONLY</p>
+  </div>
 </body>
 </html>
